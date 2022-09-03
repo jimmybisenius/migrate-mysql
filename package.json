@@ -1,6 +1,6 @@
 {
   "name": "migrate-mysql",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Simple migrations for MySQL, inspired by Thom Wright, Nick Craven, and Stack Overflow.",
   "main": "./bin/index.js",
   "bin": {

@@ -55,31 +55,34 @@ console.log('Starting Migrate MySQL...');
     }
     // Compares the results from step #4 & #5, pruning already run migrations from the local migrations list to build a list of migrations to be performed
     if(!newestMigration) throw Error('Uh oh! We couldn\'t find your migrations folder. Check again?')
+    
     if(newestMigration > latestMigration) {
         console.log('New migrations found. Running migrations...')
         // Run each new migration, from oldest added to newest
         for(let i=latestMigration+1;i<=newestMigration;i++) {
             // Find migration with iteration i
-            for(let i2=0;i2<localMigrations.length;i++) {
+            let desiredMigration: undefined | string;
+            for(let i2=0;i2<localMigrations.length;i2++) {
                 const dash = localMigrations[i2].indexOf('-')
                 const currentMigration = Number(localMigrations[i2].substring(0, dash))
                 // If current file is the desired migration
                 if(currentMigration === i) {
-                    // Execute desired migration
-                    const query =  await readFile(`./migrations/${localMigrations[i2]}`)
-                    await connection.execute(query)
-                    // Add migration to migrations table
-                    await connection.execute(`
-                    insert into migrations (
-                        filename
-                    ) values (?)
-                `, [localMigrations[i2]])
-                console.log(`Migration completed ${localMigrations[i2]} ✅`)
+                    // Save desired migration
+                    desiredMigration = localMigrations[i2]
                     // After, end for loop
                     break
                 }
-                break
             }
+            // Execute desired migration
+            const query =  await readFile(`./migrations/${desiredMigration}`)
+            await connection.execute(query)
+            // Add migration to migrations table
+            await connection.execute(`
+                insert into migrations (
+                    filename
+                ) values (?)
+            `, [desiredMigration])
+            console.log(`Migration completed ${desiredMigration} ✅`)
         }
     } else {
         console.log('No new migrations have been found. Exiting.')
