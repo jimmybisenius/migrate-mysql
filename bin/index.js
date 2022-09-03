@@ -46,9 +46,10 @@ console.clear();
 console.log('Starting Migrate MySQL...');
 (function () { return __awaiter(_this, void 0, void 0, function () {
     var connection, existingMigrations, latestMigration, i, dash, currentMigration, localMigrations, newestMigration, i, dash, currentMigration, i, desiredMigration, i2, dash, currentMigration, query;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, mysql.createConnection({
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0: return [4 /*yield*/, mysql.createConnection((_a = process.env.DB_URL) !== null && _a !== void 0 ? _a : {
                     user: process.env.DB_USER || 'root',
                     password: process.env.DB_PASS || 'single-my-links',
                     host: process.env.DB_HOST || 'localhost',
@@ -58,19 +59,19 @@ console.log('Starting Migrate MySQL...');
                 // Checks for existing migrations table. If this does not exist, it creates one
             ];
             case 1:
-                connection = _a.sent();
+                connection = _b.sent();
                 // Checks for existing migrations table. If this does not exist, it creates one
                 console.log('Checking for migrations table');
-                return [4 /*yield*/, connection.execute("\n        create table if not exists migrations (\n            id serial not null,\n            filename varchar(255) not null,\n            created_at timestamp default current_timestamp not null,\n            UNIQUE (filename)\n        );\n    ")];
+                return [4 /*yield*/, connection.execute("\n        create table if not exists migrations (\n            id int NOT NULL AUTO_INCREMENT PRIMARY KEY,\n            filename varchar(255) not null,\n            created_at timestamp default current_timestamp not null,\n            UNIQUE (filename)\n        );\n    ")];
             case 2:
-                _a.sent();
+                _b.sent();
                 console.log('Migrations table present/created');
                 // TODO: Error handling for create migrations table
                 // Runs select * from migrations to get a list of already run migrations.
                 console.log('Fetching existing migrations');
                 return [4 /*yield*/, connection.execute("\n        select * from migrations;\n    ")];
             case 3:
-                existingMigrations = (_a.sent())[0];
+                existingMigrations = (_b.sent())[0];
                 latestMigration = 0;
                 for (i = 0; i < existingMigrations.length; i++) {
                     dash = existingMigrations[i].filename.indexOf('-');
@@ -82,7 +83,7 @@ console.log('Starting Migrate MySQL...');
                 console.log('Fetching new migrations');
                 return [4 /*yield*/, readDir('./migrations')];
             case 4:
-                localMigrations = _a.sent();
+                localMigrations = _b.sent();
                 newestMigration = undefined;
                 for (i = 0; i < localMigrations.length; i++) {
                     dash = localMigrations[i].indexOf('-');
@@ -96,7 +97,7 @@ console.log('Starting Migrate MySQL...');
                 if (!(newestMigration > latestMigration)) return [3 /*break*/, 11];
                 console.log('New migrations found. Running migrations...');
                 i = latestMigration + 1;
-                _a.label = 5;
+                _b.label = 5;
             case 5:
                 if (!(i <= newestMigration)) return [3 /*break*/, 10];
                 desiredMigration = void 0;
@@ -113,26 +114,26 @@ console.log('Starting Migrate MySQL...');
                 }
                 return [4 /*yield*/, readFile("./migrations/".concat(desiredMigration))];
             case 6:
-                query = _a.sent();
+                query = _b.sent();
                 return [4 /*yield*/, connection.execute(query)
                     // Add migration to migrations table
                 ];
             case 7:
-                _a.sent();
+                _b.sent();
                 // Add migration to migrations table
                 return [4 /*yield*/, connection.execute("\n                insert into migrations (\n                    filename\n                ) values (?)\n            ", [desiredMigration])];
             case 8:
                 // Add migration to migrations table
-                _a.sent();
+                _b.sent();
                 console.log("Migration completed ".concat(desiredMigration, " \u2705"));
-                _a.label = 9;
+                _b.label = 9;
             case 9:
                 i++;
                 return [3 /*break*/, 5];
             case 10: return [3 /*break*/, 12];
             case 11:
                 console.log('No new migrations have been found. Exiting.');
-                _a.label = 12;
+                _b.label = 12;
             case 12:
                 // For each migration in said list...
                 // Run the migration against the database
