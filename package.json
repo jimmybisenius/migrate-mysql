@@ -1,0 +1,31 @@
+{
+  "name": "migrate-mysql",
+  "version": "0.1.0",
+  "description": "Simple migrations for MySQL, inspired by Thom Wright, Nick Craven, and Stack Overflow.",
+  "main": "ts-node ./bin/index.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jimmybisenius/migrate-mysql.git"
+  },
+  "keywords": [
+    "mysql",
+    "migrations",
+    "migrate",
+    "db",
+    "database",
+    "sql"
+  ],
+  "author": "Jim Bisenius",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jimmybisenius/migrate-mysql/issues"
+  },
+  "homepage": "https://github.com/jimmybisenius/migrate-mysql#readme",
+  "devDependencies": {
+    "@types/node": "^18.7.14",
+    "ts-node": "^10.9.1"
+  },
+  "dependencies": {
+    "mysql2": "^2.3.3"
+  }
+}
