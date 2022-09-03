@@ -1,5 +1,5 @@
 # Migrate MySQL
-A MySQL migration library inspired by the [`postgres-migrations` package](https://github.com/ThomWright/postgres-migrations) created by Thom Wright.
+Simple migrations for MySQL, inspired by [Thom Wright](https://github.com/ThomWright/postgres-migrations), Nick Craven, and Stack Overflow.
 
 Migrations are defined in sequential SQL files, for example:
 ```
