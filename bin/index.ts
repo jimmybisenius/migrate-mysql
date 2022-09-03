@@ -1,4 +1,4 @@
-import { connect } from "http2";
+#!/usr/bin/env node
 
 // Require third-party dependencies
 const fs = require(`fs`);
