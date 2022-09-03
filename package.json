@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Simple migrations for MySQL, inspired by Thom Wright, Nick Craven, and Stack Overflow.",
   "main": "ts-node ./bin/index.ts",
+  "bin": {
+    "migrate-mysql": "ts-node ./bin/index.ts"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jimmybisenius/migrate-mysql.git"
