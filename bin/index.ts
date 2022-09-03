@@ -13,19 +13,21 @@ console.log('Starting Migrate MySQL...');
 
 (async () => {
     // Checks for DB connectivity
-    const connection = await mysql.createConnection({
-        user: process.env.DB_USER || 'root',
-        password: process.env.DB_PASS || 'single-my-links',
-        host: process.env.DB_HOST || 'localhost',
-        port: Number(process.env.DB_PORT) || 3306,
-        database: process.env.DB_DATABASE || 'singlelink'
-    })
+    const connection = await mysql.createConnection(
+        process.env.DB_URL ?? {
+            user: process.env.DB_USER || 'root',
+            password: process.env.DB_PASS || 'single-my-links',
+            host: process.env.DB_HOST || 'localhost',
+            port: Number(process.env.DB_PORT) || 3306,
+            database: process.env.DB_DATABASE || 'singlelink'
+        }
+    )
 
     // Checks for existing migrations table. If this does not exist, it creates one
     console.log('Checking for migrations table')
     await connection.execute(`
         create table if not exists migrations (
-            id serial not null,
+            id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
             filename varchar(255) not null,
             created_at timestamp default current_timestamp not null,
             UNIQUE (filename)
