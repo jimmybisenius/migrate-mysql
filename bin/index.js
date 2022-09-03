@@ -45,7 +45,7 @@ var readFile = function (fileName) { return util.promisify(fs.readFile)(fileName
 console.clear();
 console.log('Starting Migrate MySQL...');
 (function () { return __awaiter(_this, void 0, void 0, function () {
-    var connection, existingMigrations, latestMigration, i, dash, currentMigration, localMigrations, newestMigration, i, dash, currentMigration, i, i2, dash, currentMigration, query;
+    var connection, existingMigrations, latestMigration, i, dash, currentMigration, localMigrations, newestMigration, i, dash, currentMigration, i, desiredMigration, i2, dash, currentMigration, query;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, mysql.createConnection({
@@ -93,47 +93,47 @@ console.log('Starting Migrate MySQL...');
                 // Compares the results from step #4 & #5, pruning already run migrations from the local migrations list to build a list of migrations to be performed
                 if (!newestMigration)
                     throw Error('Uh oh! We couldn\'t find your migrations folder. Check again?');
-                if (!(newestMigration > latestMigration)) return [3 /*break*/, 14];
+                if (!(newestMigration > latestMigration)) return [3 /*break*/, 11];
                 console.log('New migrations found. Running migrations...');
                 i = latestMigration + 1;
                 _a.label = 5;
             case 5:
-                if (!(i <= newestMigration)) return [3 /*break*/, 13];
-                i2 = 0;
-                _a.label = 6;
+                if (!(i <= newestMigration)) return [3 /*break*/, 10];
+                desiredMigration = void 0;
+                for (i2 = 0; i2 < localMigrations.length; i2++) {
+                    dash = localMigrations[i2].indexOf('-');
+                    currentMigration = Number(localMigrations[i2].substring(0, dash));
+                    // If current file is the desired migration
+                    if (currentMigration === i) {
+                        // Save desired migration
+                        desiredMigration = localMigrations[i2];
+                        // After, end for loop
+                        break;
+                    }
+                }
+                return [4 /*yield*/, readFile("./migrations/".concat(desiredMigration))];
             case 6:
-                if (!(i2 < localMigrations.length)) return [3 /*break*/, 12];
-                dash = localMigrations[i2].indexOf('-');
-                currentMigration = Number(localMigrations[i2].substring(0, dash));
-                if (!(currentMigration === i)) return [3 /*break*/, 10];
-                return [4 /*yield*/, readFile("./migrations/".concat(localMigrations[i2]))];
-            case 7:
                 query = _a.sent();
                 return [4 /*yield*/, connection.execute(query)
                     // Add migration to migrations table
                 ];
+            case 7:
+                _a.sent();
+                // Add migration to migrations table
+                return [4 /*yield*/, connection.execute("\n                insert into migrations (\n                    filename\n                ) values (?)\n            ", [desiredMigration])];
             case 8:
-                _a.sent();
                 // Add migration to migrations table
-                return [4 /*yield*/, connection.execute("\n                    insert into migrations (\n                        filename\n                    ) values (?)\n                ", [localMigrations[i2]])];
+                _a.sent();
+                console.log("Migration completed ".concat(desiredMigration, " \u2705"));
+                _a.label = 9;
             case 9:
-                // Add migration to migrations table
-                _a.sent();
-                console.log("Migration completed ".concat(localMigrations[i2], " \u2705"));
-                // After, end for loop
-                return [3 /*break*/, 12];
-            case 10: return [3 /*break*/, 12];
-            case 11:
-                i++;
-                return [3 /*break*/, 6];
-            case 12:
                 i++;
                 return [3 /*break*/, 5];
-            case 13: return [3 /*break*/, 15];
-            case 14:
+            case 10: return [3 /*break*/, 12];
+            case 11:
                 console.log('No new migrations have been found. Exiting.');
-                _a.label = 15;
-            case 15:
+                _a.label = 12;
+            case 12:
                 // For each migration in said list...
                 // Run the migration against the database
                 // Adds a record with the given filename and time performed to migrations
